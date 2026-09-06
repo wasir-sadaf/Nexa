@@ -2,6 +2,12 @@
 target/
 !.mvn/wrapper/maven-wrapper.jar
 
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
 # IDE
 .idea/
 .vscode/
