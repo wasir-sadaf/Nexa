@@ -31,4 +31,20 @@ public class OrderService {
     public void deleteOrder(Long id) {
         orderRepository.deleteById(id);
     }
+
+    public Order cancelOrder(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (order.getStatus() != Order.Status.PENDING &&
+                order.getStatus() != Order.Status.PROCESSING) {
+            throw new RuntimeException(
+                    "Order cannot be cancelled because its status is " + order.getStatus()
+            );
+        }
+
+        order.setStatus(Order.Status.CANCELLED);
+
+        return orderRepository.save(order);
+    }
 }

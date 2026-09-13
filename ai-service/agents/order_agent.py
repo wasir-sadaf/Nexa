@@ -1,28 +1,38 @@
 from config.llm import llm
 from graph.state import NexaState
 from prompt.order_prompt import ORDER_PROMPT
-
-
-MOCK_ORDERS = {
-    1234: {
-        "status": "shipped",
-        "delivery_date": "September 8, 2026",
-        "items": ["Wireless Mouse"],
-    },
-    5678: {
-        "status": "processing",
-        "delivery_date": "September 10, 2026",
-        "items": ["Keyboard"],
-    },
-}
+from tools.order_tools import get_order_status, cancel_order
 
 
 def order_agent(state: NexaState) -> dict:
     order_id = state.get("order_id")
+    intent = state.get("intent")
 
-    order = MOCK_ORDERS.get(order_id)
+    if order_id is None:
+        return {
+            "response": "Sure. Please provide your order ID.",
+            "needs_human": False,
+        }
 
-    if order is None:
+    if intent == "Order cancellation":
+        result = cancel_order(order_id)
+
+        if not result["success"]:
+            return {
+                "response": result["message"],
+                "tool_results": result,
+                "needs_human": False,
+            }
+
+        return {
+            "response": f"Order {order_id} has been successfully cancelled.",
+            "tool_results": result,
+            "needs_human": False,
+        }
+
+    order = get_order_status(order_id)
+
+    if not order["found"]:
         order_info = f"Order {order_id} was not found."
     else:
         order_info = str(order)
@@ -48,4 +58,6 @@ Order information:
 
     return {
         "response": response.content,
+        "tool_results": order,
+        "needs_human": False,
     }
