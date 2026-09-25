@@ -25,6 +25,11 @@ class SupervisorDecision(BaseModel):
         description="The order ID mentioned by the user, if any."
     )
 
+    ticket_id: Optional[int] = Field(
+        default=None,
+        description="The support ticket ID mentioned by the user, if any."
+    )
+
 
 supervisor_llm = llm.with_structured_output(SupervisorDecision)
 
@@ -47,4 +52,5 @@ def supervisor_agent(state: NexaState) -> dict:
         "intent": response.intent,
         "selected_agent": response.selected_agent,
         "order_id": response.order_id,
+        "ticket_id": response.ticket_id,
     }

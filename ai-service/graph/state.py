@@ -11,6 +11,7 @@ class NexaState(MessagesState):
     selected_agent: Optional[str]
 
     order_id: Optional[int]
+    ticket_id: Optional[int]
 
     tool_results: Optional[dict]
 

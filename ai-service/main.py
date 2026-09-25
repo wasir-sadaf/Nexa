@@ -18,6 +18,7 @@ class ChatResponse(BaseModel):
     intent: str | None
     selected_agent: str | None
     order_id: int | None
+    ticket_id: int | None
     response: str | None
     needs_human: bool
 
@@ -44,6 +45,7 @@ def chat(request: ChatRequest):
         intent=result.get("intent"),
         selected_agent=result.get("selected_agent"),
         order_id=result.get("order_id"),
+        ticket_id=result.get("ticket_id"),
         response=result.get("response"),
         needs_human=result.get("needs_human", False),
     )
