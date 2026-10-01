@@ -1,3 +1,6 @@
+import OrdersPage from "./pages/shared/OrdersPage";
+import CustomersPage from "./pages/shared/CustomersPage";
+import ConversationsPage from "./pages/shared/ConversationsPage";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -27,6 +30,10 @@ function App() {
                         <Route path="/users" element={<UsersPage />} />
                         <Route path="/settings" element={<SettingsPage />} />
                         <Route path="/tickets" element={<TicketsPage />} />
+
+                        <Route path="/orders" element={<OrdersPage />} />
+                        <Route path="/customers" element={<CustomersPage />} />
+                        <Route path="/history" element={<ConversationsPage />} />
                     </Route>
 
                     <Route path="*" element={<Navigate to="/login" />} />

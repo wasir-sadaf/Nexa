@@ -1,6 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Users, Briefcase, Ticket, MessageSquare, Settings, LogOut } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
+import { LayoutDashboard, Users, UserCheck, Briefcase, ShoppingCart, Ticket, MessageSquare, History, Settings, LogOut } from "lucide-react";import { useAuth } from "../../context/AuthContext";
 
 export default function DashboardLayout() {
     const location = useLocation();
@@ -17,8 +16,11 @@ export default function DashboardLayout() {
     const allNavItems = [
         { name: "Admin Panel", path: "/admin", icon: LayoutDashboard, allowedRoles: ["ADMIN"] },
         { name: "Users", path: "/users", icon: Users, allowedRoles: ["ADMIN"] },
+        { name: "Customers", path: "/customers", icon: UserCheck, allowedRoles: ["ADMIN", "SUPPORT_AGENT"] },
         { name: "Agent Workspace", path: "/agent", icon: Briefcase, allowedRoles: ["ADMIN", "SUPPORT_AGENT"] },
+        { name: "Orders", path: "/orders", icon: ShoppingCart, allowedRoles: ["ADMIN", "SUPPORT_AGENT", "CUSTOMER"] },
         { name: "Tickets", path: "/tickets", icon: Ticket, allowedRoles: ["ADMIN", "SUPPORT_AGENT", "CUSTOMER"] },
+        { name: "Chat History", path: "/history", icon: History, allowedRoles: ["ADMIN", "SUPPORT_AGENT", "CUSTOMER"] },
         { name: "AI Chat", path: "/chat", icon: MessageSquare, allowedRoles: ["ADMIN", "SUPPORT_AGENT", "CUSTOMER"] },
         { name: "Settings", path: "/settings", icon: Settings, allowedRoles: ["ADMIN"] },
     ];
