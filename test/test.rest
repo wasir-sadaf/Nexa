@@ -1,0 +1,13 @@
+POST http://localhost:8080/api/chat
+Content-Type: application/json
+
+{
+  "user_id": 3,
+  "conversation_id": 1,
+  "message": "Where is my order 3?"
+}
+
+
+###
+GET http://localhost:8080/api/orders/1
+Content-Type: application/json
