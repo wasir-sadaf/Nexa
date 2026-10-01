@@ -1,15 +1,29 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router-dom"; // 👈 'Link' was added here
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export default function LoginPage() {
     const navigate = useNavigate();
+    const { login } = useAuth();
+    const [email, setEmail] = useState("");
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        // Temporary frontend bypass: Route directly to the admin dashboard on submit
-        navigate("/admin");
+
+        // Simulate role assignment based on the email entered
+        if (email.includes("admin")) {
+            login("ADMIN");
+            navigate("/admin");
+        } else if (email.includes("agent")) {
+            login("SUPPORT_AGENT");
+            navigate("/agent");
+        } else {
+            login("CUSTOMER");
+            navigate("/chat");
+        }
     };
 
     return (
@@ -36,7 +50,9 @@ export default function LoginPage() {
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="admin@nexa.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Try: admin@, agent@, or anything else"
                                 className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 h-11 focus-visible:ring-zinc-700"
                                 required
                             />
@@ -65,7 +81,6 @@ export default function LoginPage() {
                             Sign In
                         </Button>
                         <div className="text-sm text-center text-zinc-400">
-                            {/* 👇 This line was updated to use <Link> instead of <a> 👇 */}
                             Don't have an account? <Link to="/signup" className="text-white hover:underline">Sign up</Link>
                         </div>
                     </CardFooter>
