@@ -1,15 +1,15 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router-dom"; // 👈 'Link' was added here
+import { Link, useNavigate } from "react-router-dom";
 
-export default function LoginPage() {
+export default function SignUpPage() {
     const navigate = useNavigate();
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleSignUp = (e: React.FormEvent) => {
         e.preventDefault();
-        // Temporary frontend bypass: Route directly to the admin dashboard on submit
-        navigate("/admin");
+        // Temporary bypass: Route to login after "successful" registration
+        navigate("/login");
     };
 
     return (
@@ -21,14 +21,26 @@ export default function LoginPage() {
                             <span className="text-zinc-900 font-bold text-2xl leading-none">N</span>
                         </div>
                     </div>
-                    <CardTitle className="text-2xl font-bold tracking-tight">Welcome to Nexa</CardTitle>
+                    <CardTitle className="text-2xl font-bold tracking-tight">Create an Account</CardTitle>
                     <CardDescription className="text-zinc-400">
-                        Enter your credentials to access your workspace
+                        Enter your details to get started with Nexa
                     </CardDescription>
                 </CardHeader>
 
-                <form onSubmit={handleLogin}>
+                <form onSubmit={handleSignUp}>
                     <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                            <label htmlFor="name" className="text-sm font-medium text-zinc-300">
+                                Full Name
+                            </label>
+                            <Input
+                                id="name"
+                                type="text"
+                                placeholder="John Doe"
+                                className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 h-11 focus-visible:ring-zinc-700"
+                                required
+                            />
+                        </div>
                         <div className="space-y-2">
                             <label htmlFor="email" className="text-sm font-medium text-zinc-300">
                                 Email
@@ -36,20 +48,15 @@ export default function LoginPage() {
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="admin@nexa.com"
+                                placeholder="hello@nexa.com"
                                 className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 h-11 focus-visible:ring-zinc-700"
                                 required
                             />
                         </div>
                         <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <label htmlFor="password" className="text-sm font-medium text-zinc-300">
-                                    Password
-                                </label>
-                                <a href="#" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
-                                    Forgot password?
-                                </a>
-                            </div>
+                            <label htmlFor="password" className="text-sm font-medium text-zinc-300">
+                                Password
+                            </label>
                             <Input
                                 id="password"
                                 type="password"
@@ -62,11 +69,10 @@ export default function LoginPage() {
 
                     <CardFooter className="flex flex-col space-y-4 pt-4">
                         <Button type="submit" className="w-full bg-white text-black hover:bg-zinc-200 h-11 text-md font-medium">
-                            Sign In
+                            Sign Up
                         </Button>
                         <div className="text-sm text-center text-zinc-400">
-                            {/* 👇 This line was updated to use <Link> instead of <a> 👇 */}
-                            Don't have an account? <Link to="/signup" className="text-white hover:underline">Sign up</Link>
+                            Already have an account? <Link to="/login" className="text-white hover:underline">Sign in</Link>
                         </div>
                     </CardFooter>
                 </form>

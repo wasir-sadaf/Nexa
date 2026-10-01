@@ -1,3 +1,4 @@
+import SignUpPage from "./pages/auth/SignUpPage";
 import LoginPage from "./pages/auth/LoginPage";
 import AgentDashboard from "./pages/agent/AgentDashboard";
 import CustomerChat from "./pages/customer/CustomerChat";
@@ -9,8 +10,9 @@ function App() {
     return (
         <Router>
             <Routes>
-                {/* Standalone Route (No Sidebar) */}
+                {/* Standalone Routes (No Sidebar) */}
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignUpPage />} />
 
                 {/* Dashboard Routes (Wrapped in Sidebar Layout) */}
                 <Route element={<DashboardLayout />}>
