@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Users, MessageSquare, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, Briefcase, Ticket, MessageSquare, Settings, LogOut } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
 export default function DashboardLayout() {
@@ -16,8 +16,11 @@ export default function DashboardLayout() {
     // Define which roles can see which links
     const allNavItems = [
         { name: "Admin Panel", path: "/admin", icon: LayoutDashboard, allowedRoles: ["ADMIN"] },
-        { name: "Agent Queue", path: "/agent", icon: Users, allowedRoles: ["ADMIN", "SUPPORT_AGENT"] },
+        { name: "Users", path: "/users", icon: Users, allowedRoles: ["ADMIN"] },
+        { name: "Agent Workspace", path: "/agent", icon: Briefcase, allowedRoles: ["ADMIN", "SUPPORT_AGENT"] },
+        { name: "Tickets", path: "/tickets", icon: Ticket, allowedRoles: ["ADMIN", "SUPPORT_AGENT", "CUSTOMER"] },
         { name: "AI Chat", path: "/chat", icon: MessageSquare, allowedRoles: ["ADMIN", "SUPPORT_AGENT", "CUSTOMER"] },
+        { name: "Settings", path: "/settings", icon: Settings, allowedRoles: ["ADMIN"] },
     ];
 
     // Filter links based on the current user's role

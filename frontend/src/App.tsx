@@ -6,6 +6,9 @@ import CustomerChat from "./pages/customer/CustomerChat";
 import LoginPage from "./pages/auth/LoginPage";
 import SignUpPage from "./pages/auth/SignUpPage";
 import { AuthProvider } from "./context/AuthContext";
+import UsersPage from "./pages/admin/UsersPage";
+import SettingsPage from "./pages/admin/SettingsPage";
+import TicketsPage from "./pages/shared/TicketsPage";
 
 function App() {
     return (
@@ -19,6 +22,11 @@ function App() {
                         <Route path="/admin" element={<AdminDashboard />} />
                         <Route path="/agent" element={<AgentDashboard />} />
                         <Route path="/chat" element={<CustomerChat />} />
+
+                        {/* 👇 Add the new routes 👇 */}
+                        <Route path="/users" element={<UsersPage />} />
+                        <Route path="/settings" element={<SettingsPage />} />
+                        <Route path="/tickets" element={<TicketsPage />} />
                     </Route>
 
                     <Route path="*" element={<Navigate to="/login" />} />
