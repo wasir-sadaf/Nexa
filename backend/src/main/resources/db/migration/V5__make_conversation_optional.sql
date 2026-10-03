@@ -1,0 +1,1 @@
+ALTER TABLE support_tickets MODIFY conversation_id BIGINT NULL;

@@ -1,15 +1,37 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function SignUpPage() {
     const navigate = useNavigate();
 
-    const handleSignUp = (e: React.FormEvent) => {
+    // 1. Add state to track the user's input
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+
+    const handleSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Temporary bypass: Route to login after "successful" registration
-        navigate("/login");
+        setErrorMessage(""); // Clear previous errors
+
+        try {
+            // 2. Send the registration request to Spring Boot
+            await axios.post("http://localhost:8080/api/auth/register", {
+                name: name,
+                email: email,
+                password: password
+            });
+
+            // 3. Navigate to login on success
+            navigate("/login");
+        } catch (error: any) {
+            console.error("Signup failed:", error);
+            setErrorMessage(error.response?.data?.error || "Failed to register account.");
+        }
     };
 
     return (
@@ -29,6 +51,11 @@ export default function SignUpPage() {
 
                 <form onSubmit={handleSignUp}>
                     <CardContent className="space-y-4">
+                        {errorMessage && (
+                            <div className="text-red-500 text-sm font-medium text-center bg-red-500/10 p-2 rounded">
+                                {errorMessage}
+                            </div>
+                        )}
                         <div className="space-y-2">
                             <label htmlFor="name" className="text-sm font-medium text-zinc-300">
                                 Full Name
@@ -37,6 +64,8 @@ export default function SignUpPage() {
                                 id="name"
                                 type="text"
                                 placeholder="John Doe"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
                                 className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 h-11 focus-visible:ring-zinc-700"
                                 required
                             />
@@ -49,6 +78,8 @@ export default function SignUpPage() {
                                 id="email"
                                 type="email"
                                 placeholder="hello@nexa.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 h-11 focus-visible:ring-zinc-700"
                                 required
                             />
@@ -61,6 +92,8 @@ export default function SignUpPage() {
                                 id="password"
                                 type="password"
                                 placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                                 className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 h-11 focus-visible:ring-zinc-700"
                                 required
                             />

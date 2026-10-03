@@ -4,25 +4,43 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
 
 export default function LoginPage() {
     const navigate = useNavigate();
     const { login } = useAuth();
+
     const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [errorMsg, setErrorMsg] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
+        setErrorMsg("");
 
-        // Simulate role assignment based on the email entered
-        if (email.includes("admin")) {
-            login("ADMIN");
-            navigate("/admin");
-        } else if (email.includes("agent")) {
-            login("SUPPORT_AGENT");
-            navigate("/agent");
-        } else {
-            login("CUSTOMER");
-            navigate("/chat");
+        try {
+            const response = await axios.post("http://localhost:8080/api/auth/login", {
+                email: email,
+                password: password
+            });
+
+            localStorage.setItem("userId", response.data.id);
+            localStorage.setItem("userRole", response.data.role);
+
+            if (login) {
+                login(response.data.role);
+            }
+
+            // Navigate directly to the tickets page without a forced window reload
+            navigate("/tickets");
+
+        } catch (error: any) {
+            console.error("Login failed with error:", error);
+            setErrorMsg(error.response?.data?.error || "Invalid email or password.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -43,42 +61,38 @@ export default function LoginPage() {
 
                 <form onSubmit={handleLogin}>
                     <CardContent className="space-y-4">
+                        {errorMsg && (
+                            <div className="p-3 rounded bg-rose-500/10 border border-rose-500/50 text-rose-500 text-sm text-center">
+                                {errorMsg}
+                            </div>
+                        )}
                         <div className="space-y-2">
-                            <label htmlFor="email" className="text-sm font-medium text-zinc-300">
-                                Email
-                            </label>
+                            <label htmlFor="email" className="text-sm font-medium text-zinc-300">Email</label>
                             <Input
-                                id="email"
-                                type="email"
-                                value={email}
+                                id="email" type="email" value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="Try: admin@, agent@, or anything else"
-                                className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 h-11 focus-visible:ring-zinc-700"
+                                placeholder="admin@nexa.com"
+                                className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 h-11"
                                 required
                             />
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                                <label htmlFor="password" className="text-sm font-medium text-zinc-300">
-                                    Password
-                                </label>
-                                <a href="#" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
-                                    Forgot password?
-                                </a>
+                                <label htmlFor="password" className="text-sm font-medium text-zinc-300">Password</label>
                             </div>
                             <Input
-                                id="password"
-                                type="password"
+                                id="password" type="password" value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                                 placeholder="••••••••"
-                                className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 h-11 focus-visible:ring-zinc-700"
+                                className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 h-11"
                                 required
                             />
                         </div>
                     </CardContent>
 
                     <CardFooter className="flex flex-col space-y-4 pt-4">
-                        <Button type="submit" className="w-full bg-white text-black hover:bg-zinc-200 h-11 text-md font-medium">
-                            Sign In
+                        <Button disabled={isLoading} type="submit" className="w-full bg-white text-black hover:bg-zinc-200 h-11 text-md font-medium">
+                            {isLoading ? "Signing in..." : "Sign In"}
                         </Button>
                         <div className="text-sm text-center text-zinc-400">
                             Don't have an account? <Link to="/signup" className="text-white hover:underline">Sign up</Link>

@@ -11,10 +11,19 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [role, setRole] = useState<Role>(null);
+    // 1. Initialize state directly from localStorage so the app remembers you
+    const [role, setRole] = useState<Role>(() => {
+        return (localStorage.getItem("userRole") as Role) || null;
+    });
 
     const login = (selectedRole: Role) => setRole(selectedRole);
-    const logout = () => setRole(null);
+
+    // 2. Ensure logout clears the browser storage too
+    const logout = () => {
+        localStorage.removeItem("userId");
+        localStorage.removeItem("userRole");
+        setRole(null);
+    };
 
     return (
         <AuthContext.Provider value={{ role, login, logout }}>
