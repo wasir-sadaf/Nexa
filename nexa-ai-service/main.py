@@ -1,12 +1,14 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from google import genai
+from google.genai import types
 from typing import Optional
+import json
 
 app = FastAPI()
 
-# Initialize the new Google GenAI Client
-client = genai.Client(api_key="YOUR_GEMINI_API_KEY")
+client = genai.Client(api_key="AIzaSyC1YdBOjO0J-wYbEu2aJBFJk8P4wQeilZc")
+
 class AiRequest(BaseModel):
     user_id: int
     conversation_id: int
@@ -23,23 +25,28 @@ class AiResponse(BaseModel):
 async def chat_endpoint(request: AiRequest):
     try:
         system_prompt = f"""
-        You are an AI support agent for Nexa. A user says: "{request.message}"
-        Respond helpfully and concisely.
+        You are an AI support agent for Nexa.
+        Analyze the user's message: "{request.message}"
+        
+        Respond helpfully to the user in the 'response' field.
+        Determine the 'intent' (e.g., 'password_reset', 'order_status', 'general').
+        Set 'needs_human' to true ONLY if the user is highly frustrated or explicitly asks for a human agent.
+        Extract any mentioned order ID into 'order_id' as an integer, or leave null.
+        Set 'selected_agent' to 'ai_agent' (or 'human_support' if needs_human is true).
         """
 
-        # Call Gemini using the new SDK syntax
         response = client.models.generate_content(
             model="gemini-3.5-flash",
             contents=system_prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=AiResponse,
+            ),
         )
 
-        return AiResponse(
-            intent="general_support",
-            selected_agent="ai_agent",
-            order_id=None,
-            response=response.text,
-            needs_human=False
-        )
+        # Gemini returns a structured JSON string, parse it into the Pydantic model
+        response_data = json.loads(response.text)
+        return AiResponse(**response_data)
 
     except Exception as e:
         print(f"Error calling Gemini: {e}")

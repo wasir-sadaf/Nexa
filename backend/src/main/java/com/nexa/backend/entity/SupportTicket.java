@@ -49,6 +49,7 @@ public class SupportTicket {
     public enum Status {
         OPEN,
         IN_PROGRESS,
+        ESCALATED,
         RESOLVED,
         CLOSED
     }
