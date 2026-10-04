@@ -40,17 +40,23 @@ public class SupportTicketController {
         List<SupportTicket> tickets = supportTicketRepository.findAll();
         return tickets.stream().map(ticket -> {
             Map<String, Object> map = new HashMap<>();
-            map.put("id", "TKT-" + ticket.getId());
+
+            // Send raw ID and enum status so React can use them for logic
+            map.put("id", ticket.getId());
             map.put("subject", ticket.getSubject());
+            map.put("status", ticket.getStatus().name());
+            map.put("priority", ticket.getPriority().name());
 
-            String status = ticket.getStatus().name();
-            if (status.equals("IN_PROGRESS")) status = "In Progress";
-            else status = status.substring(0, 1).toUpperCase() + status.substring(1).toLowerCase();
-
-            map.put("status", status);
+            // Provide the customer object structure React expects
+            if (ticket.getCustomer() != null) {
+                Map<String, Object> customerMap = new HashMap<>();
+                customerMap.put("id", ticket.getCustomer().getId());
+                customerMap.put("name", ticket.getCustomer().getName());
+                map.put("customer", customerMap);
+            }
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
-            map.put("lastUpdated", ticket.getUpdatedAt() != null ? ticket.getUpdatedAt().format(formatter) : "Unknown");
+            map.put("createdAt", ticket.getCreatedAt() != null ? ticket.getCreatedAt().format(formatter) : "Unknown");
 
             return map;
         }).collect(Collectors.toList());

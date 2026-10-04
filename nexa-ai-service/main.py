@@ -7,7 +7,7 @@ import json
 
 app = FastAPI()
 
-client = genai.Client(api_key="AIzaSyC1YdBOjO0J-wYbEu2aJBFJk8P4wQeilZc")
+client = genai.Client(api_key="AIzaSyD8rSoK-THnzpNIE6ioGIk4JHmOFIzxv0A")
 
 class AiRequest(BaseModel):
     user_id: int

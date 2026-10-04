@@ -9,6 +9,8 @@ import com.nexa.backend.repository.MessageRepository;
 import com.nexa.backend.repository.SupportTicketRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/chat")
 public class ChatController {
@@ -63,5 +65,10 @@ public class ChatController {
         }
 
         return aiResponse;
+    }
+
+    @GetMapping("/history/{conversationId}")
+    public List<Message> getChatHistory(@PathVariable Long conversationId) {
+        return messageRepository.findByConversationIdOrderByCreatedAtAsc(conversationId);
     }
 }

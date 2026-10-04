@@ -9,12 +9,37 @@ interface ChatMessage {
 }
 
 export default function AiChatPage() {
-    const [messages, setMessages] = useState<ChatMessage[]>([
-        { id: 1, text: "Hello! I am Nexa's AI assistant. How can I help you today?", sender: "ai" }
-    ]);
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    // Fetch chat history when the component mounts
+    useEffect(() => {
+        const fetchHistory = async () => {
+            try {
+                // Using conversation 1 to match your hardcoded setup
+                const response = await axios.get("http://localhost:8080/api/chat/history/1");
+
+                if (response.data && response.data.length > 0) {
+                    const loadedMessages = response.data.map((msg: any) => ({
+                        id: msg.id,
+                        text: msg.content,
+                        sender: msg.senderType === "CUSTOMER" ? "user" : "ai"
+                    }));
+                    setMessages(loadedMessages);
+                } else {
+                    // Fallback welcome message if database is empty
+                    setMessages([{ id: 1, text: "Hello! I am Nexa's AI assistant. How can I help you today?", sender: "ai" }]);
+                }
+            } catch (error) {
+                console.error("Failed to fetch history:", error);
+                setMessages([{ id: 1, text: "Hello! I am Nexa's AI assistant. How can I help you today?", sender: "ai" }]);
+            }
+        };
+
+        fetchHistory();
+    }, []);
 
     // Auto-scroll to bottom when new messages arrive
     useEffect(() => {
@@ -34,10 +59,9 @@ export default function AiChatPage() {
         setIsLoading(true);
 
         try {
-            // Call your Spring Boot ChatController
             const response = await axios.post("http://localhost:8080/api/chat", {
                 user_id: userId,
-                conversation_id: 1, // You can make this dynamic later
+                conversation_id: 1,
                 message: userText
             });
 
