@@ -22,20 +22,29 @@ public class ConversationController {
         return conversationService.getAllConversations();
     }
 
+    @GetMapping("/user/{customerId}")
+    public List<Conversation> getConversationsByCustomer(
+            @PathVariable Long customerId) {
+        return conversationService.getConversationsByCustomer(customerId);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Conversation> getConversationById(@PathVariable Long id) {
+    public ResponseEntity<Conversation> getConversationById(
+            @PathVariable Long id) {
         return conversationService.getConversationById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Conversation createConversation(@RequestBody Conversation conversation) {
+    public Conversation createConversation(
+            @RequestBody Conversation conversation) {
         return conversationService.createConversation(conversation);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteConversation(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteConversation(
+            @PathVariable Long id) {
         conversationService.deleteConversation(id);
         return ResponseEntity.noContent().build();
     }

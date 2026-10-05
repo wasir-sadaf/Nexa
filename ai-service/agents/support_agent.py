@@ -17,9 +17,9 @@ def support_agent(state: NexaState) -> dict:
 
     # Check an existing ticket
     if ticket_id is not None or "ticket" in intent and (
-        "status" in intent
-        or "check" in intent
-        or "track" in intent
+            "status" in intent
+            or "check" in intent
+            or "track" in intent
     ):
         if ticket_id is None:
             return {
@@ -68,6 +68,12 @@ PRIORITY: <LOW, MEDIUM, or HIGH>
     )
 
     content = response.content
+
+    if isinstance(content, list):
+        content = "".join(
+            item.get("text", "") if isinstance(item, dict) else str(item)
+            for item in content
+        )
 
     subject = ""
     description = ""

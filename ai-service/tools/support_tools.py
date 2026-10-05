@@ -4,21 +4,19 @@ BACKEND_URL = "http://localhost:8080"
 
 
 def create_support_ticket(
-    user_id: int,
-    conversation_id: int,
-    subject: str,
-    description: str,
-    priority: str = "MEDIUM",
+        user_id: int,
+        conversation_id: int,
+        subject: str,
+        description: str,
+        priority: str = "MEDIUM",
 ) -> dict:
 
     response = requests.post(
-        f"{BACKEND_URL}/api/tickets/ai",
+        f"{BACKEND_URL}/api/tickets",
         json={
-            "user_id": user_id,
-            "conversation_id": conversation_id,
+            "customerId": user_id,
             "subject": subject,
             "description": description,
-            "priority": priority,
         },
         timeout=10,
     )
@@ -27,12 +25,14 @@ def create_support_ticket(
 
     ticket = response.json()
 
+    ticket_id = ticket["ticketId"]
+
     return {
         "success": True,
-        "ticket_id": ticket["id"],
-        "subject": ticket["subject"],
-        "priority": ticket["priority"],
-        "status": ticket["status"],
+        "ticket_id": ticket_id,
+        "subject": subject,
+        "priority": priority,
+        "status": "OPEN",
     }
 
 
@@ -54,7 +54,7 @@ def get_support_ticket(ticket_id: int) -> dict:
 
     return {
         "found": True,
-        "ticket_id": ticket["id"],
+        "ticket_id": ticket.get("rawId", ticket_id),
         "subject": ticket["subject"],
         "description": ticket["description"],
         "priority": ticket["priority"],

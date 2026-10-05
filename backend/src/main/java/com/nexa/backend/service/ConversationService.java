@@ -20,6 +20,10 @@ public class ConversationService {
         return conversationRepository.findAll();
     }
 
+    public List<Conversation> getConversationsByCustomer(Long customerId) {
+        return conversationRepository.findByCustomerId(customerId);
+    }
+
     public Optional<Conversation> getConversationById(Long id) {
         return conversationRepository.findById(id);
     }

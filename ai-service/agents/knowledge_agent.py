@@ -1,22 +1,34 @@
+from pathlib import Path
+
+
 from config.llm import llm
 from graph.state import NexaState
 from prompt.knowledge_prompt import KNOWLEDGE_PROMPT
 
 
-KNOWLEDGE_BASE = {
-    "refund": "Customers can request a refund within 30 days of receiving an order.",
-    "return": "Customers can return eligible products within 30 days of delivery.",
-    "shipping": "Standard shipping usually takes 3-5 business days.",
-}
+
+
+KNOWLEDGE_BASE_PATH = (
+        Path(__file__).resolve().parent.parent
+        / "knowledge"
+        / "knowledge_base.md"
+)
+
+
+
+
+def load_knowledge_base() -> str:
+    return KNOWLEDGE_BASE_PATH.read_text(encoding="utf-8")
+
+
 
 
 def knowledge_agent(state: NexaState) -> dict:
     user_message = state["messages"][-1].content
 
-    knowledge = "\n".join(
-        f"- {key}: {value}"
-        for key, value in KNOWLEDGE_BASE.items()
-    )
+
+    knowledge_base = load_knowledge_base()
+
 
     response = llm.invoke(
         [
@@ -24,19 +36,26 @@ def knowledge_agent(state: NexaState) -> dict:
             (
                 "human",
                 f"""
-User request:
+Knowledge Base:
+
+
+{knowledge_base}
+
+
+Customer Question:
 {user_message}
 
-Knowledge base:
-{knowledge}
+
+Answer the customer using only the information from the Knowledge Base.
+Keep the answer clear and concise.
 """,
             ),
         ]
     )
 
+
     return {
         "response": response.content,
-        "tool_results": {
-            "knowledge": knowledge
-        },
+        "needs_human": False,
     }
+
