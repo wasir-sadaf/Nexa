@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState } from "react";
+import type { ReactNode } from "react";
 
 type Role = "ADMIN" | "SUPPORT_AGENT" | "CUSTOMER" | null;
 
@@ -11,14 +12,20 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    // 1. Initialize state directly from localStorage so the app remembers you
     const [role, setRole] = useState<Role>(() => {
         return (localStorage.getItem("userRole") as Role) || null;
     });
 
-    const login = (selectedRole: Role) => setRole(selectedRole);
+    const login = (selectedRole: Role) => {
+        setRole(selectedRole);
 
-    // 2. Ensure logout clears the browser storage too
+        if (selectedRole) {
+            localStorage.setItem("userRole", selectedRole);
+        } else {
+            localStorage.removeItem("userRole");
+        }
+    };
+
     const logout = () => {
         localStorage.removeItem("userId");
         localStorage.removeItem("userRole");
@@ -34,8 +41,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
     const context = useContext(AuthContext);
+
     if (context === undefined) {
         throw new Error("useAuth must be used within an AuthProvider");
     }
+
     return context;
 }

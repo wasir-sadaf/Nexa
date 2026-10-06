@@ -25,6 +25,7 @@ export default function AiChatPage() {
 
                 if (!userId) {
                     console.error("User ID not found in localStorage");
+
                     setMessages([
                         {
                             id: 1,
@@ -32,6 +33,7 @@ export default function AiChatPage() {
                             sender: "ai",
                         },
                     ]);
+
                     return;
                 }
 
@@ -48,7 +50,7 @@ export default function AiChatPage() {
                     setConversationId(currentConversationId);
 
                     const historyResponse = await axios.get(
-                        `http://localhost:8080/api/chat/history/${currentConversationId}`
+                        `http://localhost:8080/api/messages/conversation/${currentConversationId}`
                     );
 
                     if (
@@ -134,6 +136,7 @@ export default function AiChatPage() {
                     sender: "ai",
                 },
             ]);
+
             return;
         }
 
@@ -153,6 +156,7 @@ export default function AiChatPage() {
                     sender: "ai",
                 },
             ]);
+
             return;
         }
 
@@ -167,8 +171,10 @@ export default function AiChatPage() {
         setIsLoading(true);
 
         try {
+            // Send through Spring Boot so the backend
+            // can save both the customer and AI messages.
             const response = await axios.post(
-                "http://localhost:8000/chat",
+                "http://localhost:8080/api/chat",
                 {
                     user_id: userId,
                     conversation_id: conversationId,
@@ -208,6 +214,7 @@ export default function AiChatPage() {
                 <h1 className="text-3xl font-bold tracking-tight">
                     AI Assistant
                 </h1>
+
                 <p className="text-zinc-400 mt-2">
                     Describe your issue, and our AI will help resolve it or
                     route it to an agent.
@@ -299,3 +306,4 @@ export default function AiChatPage() {
         </div>
     );
 }
+

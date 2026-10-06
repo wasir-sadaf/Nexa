@@ -20,6 +20,10 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
+    public List<Order> getOrdersByCustomerId(Long customerId) {
+        return orderRepository.findByCustomerId(customerId);
+    }
+
     public Optional<Order> getOrderById(Long id) {
         return orderRepository.findById(id);
     }
@@ -38,6 +42,7 @@ public class OrderService {
 
         if (order.getStatus() != Order.Status.PENDING &&
                 order.getStatus() != Order.Status.PROCESSING) {
+
             throw new RuntimeException(
                     "Order cannot be cancelled because its status is " + order.getStatus()
             );

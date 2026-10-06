@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -30,7 +31,17 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public User createUser(@RequestBody Map<String, String> request) {
+
+        User user = new User();
+
+        user.setName(request.get("name"));
+        user.setEmail(request.get("email"));
+        user.setPassword(request.get("password"));
+        user.setRole(
+                User.Role.valueOf(request.get("role"))
+        );
+
         return userService.createUser(user);
     }
 

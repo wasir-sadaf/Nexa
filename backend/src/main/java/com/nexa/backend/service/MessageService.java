@@ -20,6 +20,10 @@ public class MessageService {
         return messageRepository.findAll();
     }
 
+    public List<Message> getMessagesByConversation(Long conversationId) {
+        return messageRepository.findByConversationIdOrderByCreatedAtAsc(conversationId);
+    }
+
     public Optional<Message> getMessageById(Long id) {
         return messageRepository.findById(id);
     }

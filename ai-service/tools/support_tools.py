@@ -15,6 +15,7 @@ def create_support_ticket(
         f"{BACKEND_URL}/api/tickets",
         json={
             "customerId": user_id,
+            "conversationId": conversation_id,
             "subject": subject,
             "description": description,
         },
@@ -30,6 +31,10 @@ def create_support_ticket(
     return {
         "success": True,
         "ticket_id": ticket_id,
+        "conversation_id": ticket.get(
+            "conversationId",
+            conversation_id
+        ),
         "subject": subject,
         "priority": priority,
         "status": "OPEN",
@@ -37,6 +42,9 @@ def create_support_ticket(
 
 
 def get_support_ticket(ticket_id: int) -> dict:
+    if isinstance(ticket_id, str) and ticket_id.startswith("TKT-"):
+        ticket_id = int(ticket_id.replace("TKT-", ""))
+
     response = requests.get(
         f"{BACKEND_URL}/api/tickets/{ticket_id}",
         timeout=10,
@@ -59,10 +67,14 @@ def get_support_ticket(ticket_id: int) -> dict:
         "description": ticket["description"],
         "priority": ticket["priority"],
         "status": ticket["status"],
+        "conversation_id": ticket.get("conversationId"),
     }
 
 
 def escalate_support_ticket(ticket_id: int) -> dict:
+    if isinstance(ticket_id, str) and ticket_id.startswith("TKT-"):
+        ticket_id = int(ticket_id.replace("TKT-", ""))
+
     response = requests.put(
         f"{BACKEND_URL}/api/tickets/{ticket_id}/escalate",
         timeout=10,
